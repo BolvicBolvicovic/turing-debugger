@@ -1,3 +1,9 @@
-import { launchDebuggee } from './server/launcher';
+import { launchDebuggee } from './server/launcher.js';
 
-launchDebuggee('/absolute/path/to/turing/machine', 'debuggee_name');
+const debuggeeName = process.argv.filter((_, i) => i > 3).join(' ');
+
+try {
+  launchDebuggee(process.env.NODE_TM_PATH!, debuggeeName);
+} catch (error) {
+  console.error('Error launching debuggee:', error);
+}

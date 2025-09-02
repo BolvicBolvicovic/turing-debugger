@@ -8,7 +8,7 @@ import { ChildProcess, exec } from 'child_process';
  * @returns A ChildProcess representing the spawned debuggee process.
  */
 export function launchDebuggee(tmPath: string, debuggee: string): ChildProcess {
-  return exec(`cd ${tmPath} && dune exec ${debuggee}`, (error, stdout, stderr) => {
+  return exec(`cd ${tmPath} && dune exec ft_turing ${debuggee}`, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error executing binary: ${error.message}`);
       return;

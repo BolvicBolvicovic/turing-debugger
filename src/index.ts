@@ -1,5 +1,3 @@
-export function hello(name: string): string {
-  return `Hello, ${name}!`;
-}
+import { launchDebuggee } from './server/launcher';
 
-console.log(hello('World'));
+launchDebuggee('/absolute/path/to/turing/machine', 'debuggee_name');

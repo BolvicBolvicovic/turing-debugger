@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "start": "node --env-file .env dist/index.js",
+    "start": "node --env-file .env dist/index.js -- ",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",

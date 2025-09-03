@@ -1,9 +1,9 @@
-function getTMPath(): string {
-  // Logic to retrieve the Turing machine path
-  return '/absolute/path/to/turing/machine';
-}
+export function getTMPath(): string {
+  const tmPath = process.argv.filter((_, i) => i > 2).join(' ');
 
-export function initCLI() {
-  const tmPath = getTMPath();
-  // Initialize the command-line interface
+  if (!tmPath) {
+    throw new Error(`Turing machine path is not specified!\nTuring machine's path: ${tmPath}`);
+  }
+
+  return tmPath;
 }

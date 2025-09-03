@@ -22,12 +22,12 @@ This project has two goals:
 
 - At the root of the repository, create a `.env` file containing:
   - [ ] `NODE_TM_PATH=~/path/to/ft_turing/folder`
-- Run `pnpm i`
+- Run `pnpm i && pnpm link`
 
 ## Start
 
 ```bash
-pnpm start ["TURING_MACHINE'S FILEPATH"] ["TURING MACHINE'S ARGUMENT"]
+turing-debugger ["TURING_MACHINE'S FILEPATH"] ["TURING MACHINE'S ARGUMENT"]
 ```
 
 # Plan

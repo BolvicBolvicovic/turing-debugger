@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+import 'dotenv/config';
 import { cli } from './cli/index.js';
 import { debuggee as debuggeeLib } from './debuggee/index.js';
 import { parser } from './utils/parser.js';

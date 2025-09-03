@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "type": "module",
+  "bin": {
+    "turing-debugger": "./dist/index.js"
+  },
   "scripts": {
     "build": "tsc",
-    "start": "node --env-file .env dist/index.js -- ",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
@@ -33,6 +35,8 @@
     "typescript-eslint": "^8.41.0"
   },
   "dependencies": {
+    "commander": "^14.0.0",
+    "dotenv": "^17.2.2",
     "zod": "^4.1.5"
   }
 }

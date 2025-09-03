@@ -15,7 +15,9 @@
     "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "jsx": "react-jsx",
+    "esModuleInterop": true
   },
   "include": ["src/**/*", "*.ts", "*.js"],
   "exclude": ["node_modules", "dist"]

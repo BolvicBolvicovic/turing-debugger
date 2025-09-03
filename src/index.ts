@@ -1,41 +1,17 @@
-import { getTMPath } from './cli/init.js';
-import { launchDebuggee, setupDebuggee } from './debuggee/setup.js';
-import { cleanupDebuggee } from './debuggee/cleanup.js';
-import http from 'http';
+import { cli } from './cli/index.js';
+import { debuggee as debuggeeLib } from './debuggee/index.js';
+import { parser } from './utils/parser.js';
+
+const debuggeeArgs = cli.getTMArgs();
+const debuggee = debuggeeLib.launch(process.env.NODE_TM_PATH!, debuggeeArgs.asString);
+const machine = parser.turingMachine(debuggeeArgs.machinePath);
 
 try {
-  const debuggeeName = getTMPath();
-  const debuggee = launchDebuggee(process.env.NODE_TM_PATH!, debuggeeName);
-  setupDebuggee(debuggee);
+  debuggeeLib.setup(await debuggee);
 
-  // Try connecting to the server periodically
-  let attempts = 0;
-  const maxAttempts = 20;
-  while (attempts < maxAttempts) {
-    attempts++;
-    console.log(`Attempting connection ${attempts}/${maxAttempts}...`);
-
-    const req = http.get('http://localhost:8080/input', res => {
-      console.log(`Response ${res.statusCode}:`);
-
-      let data = '';
-      res.on('data', chunk => (data += chunk));
-      res.on('end', () => {
-        console.log('Response data:', data);
-        cleanupDebuggee(debuggee);
-      });
-    });
-
-    req.on('error', () => {
-      if (attempts >= maxAttempts) {
-        console.log('Max attempts reached, stopping...');
-        cleanupDebuggee(debuggee);
-      }
-    });
-
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    req.destroy();
-  }
+  console.log('Turing Machine loaded successfully:', JSON.stringify(await machine));
 } catch (error) {
-  console.error('Error launching debuggee:', error);
+  console.error('Debuggee error:', error);
+} finally {
+  debuggeeLib.cleanup(await debuggee);
 }

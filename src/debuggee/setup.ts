@@ -1,31 +1,27 @@
 import { ChildProcess, exec } from 'child_process';
 import { cleanupDebuggee } from './cleanup.js';
 
-/**
- * Launch a debuggee process.
- * The debugger has to be in a folder at the root of the Turing Machine project.
- * @param tmPath The absolute path to the Turing machine folder.
- * @param debuggee The file name of the Turing machine and its arguments.
- * @returns A ChildProcess representing the spawned debuggee process.
- */
-export function launchDebuggee(tmPath: string, debuggee: string): ChildProcess {
+export async function launchDebuggee(tmPath: string, debuggee: string): Promise<ChildProcess> {
   const command = `cd ${tmPath} && dune exec ft_turing -- --debug ${debuggee}`;
 
-  return exec(command, (error, stdout, stderr) => {
-    if (error) {
-      throw error;
-    }
+  const debuggeeProcess = exec(command);
 
-    if (stderr) {
-      throw new Error(stderr);
-    }
+  let data = '';
 
-    if (stdout.includes('USAGE:')) {
-      throw new Error(`Debuggee usage error!\nCommand used:\n${command}\nDebuggee:\n${debuggee}`);
-    }
-
-    console.log(`Output:\n${stdout}`);
+  debuggeeProcess.stdout?.on('data', chunk => {
+    data += chunk.toString();
   });
+
+  debuggeeProcess.stderr?.on('data', chunk => {
+    data += chunk.toString();
+  });
+
+  while (!data.includes('Running at http://localhost:8080')) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    continue;
+  }
+
+  return debuggeeProcess;
 }
 
 export function setupDebuggee(debuggee: ChildProcess): void {

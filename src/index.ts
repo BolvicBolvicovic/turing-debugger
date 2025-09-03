@@ -14,7 +14,9 @@ const machine = parser.turingMachine(debuggeeArgs.machinePath);
 try {
   debuggeeLib.setup(await debuggee);
 
-  // Interactive terminal UI displaying the machine and debuggee state with graceful quit
+  // Clear screen
+  process.stdout.write('\x1b[2J\x1b[0f');
+
   const { waitUntilExit } = render(
     React.createElement(DebuggerApp, {
       machine: await machine,

@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { homedir } from 'os';
 import { resolve } from 'path';
-import { Parser, TuringMachine, TuringMachineSchema } from './parser.types.js';
+import { Parser, TuringMachine, TuringMachineSchema } from './types/parser.types.js';
 
 function expandPath(filePath: string): string {
   if (filePath.startsWith('~/')) {

@@ -5,22 +5,22 @@ import { render } from 'ink';
 import { cli } from './cli/index.js';
 import { debuggee as debuggeeLib } from './debuggee/index.js';
 import { parser } from './utils/parser.js';
-import { DebuggerApp } from './ui/index.js';
+import { Root } from './ui/root.js';
+import { lib } from './utils/lib.js';
 
-const debuggeeArgs = cli.getTMArgs();
+const debuggeeArgs = cli.getDebuggeeArgs();
 const debuggee = debuggeeLib.launch(process.env.NODE_TM_PATH!, debuggeeArgs.asString);
 const machine = parser.turingMachine(debuggeeArgs.machinePath);
 
 try {
   debuggeeLib.setup(await debuggee);
 
-  // Clear screen
-  process.stdout.write('\x1b[2J\x1b[0f');
+  lib.clearScreen();
 
   const { waitUntilExit } = render(
-    React.createElement(DebuggerApp, {
+    React.createElement(Root, {
       machine: await machine,
-      debuggee: await debuggee,
+      debuggeeArgs,
     })
   );
 

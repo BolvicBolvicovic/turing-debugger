@@ -1,4 +1,4 @@
-export interface TMArgs {
+export interface DebuggeeArgs {
   machinePath: string;
   machineInput: string;
   asString: string;

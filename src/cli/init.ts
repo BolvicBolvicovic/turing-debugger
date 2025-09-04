@@ -1,10 +1,10 @@
-import { TMArgs } from './cli.types.js';
+import { DebuggeeArgs } from './cli.types.js';
 
-export function getTMArgs(): TMArgs {
+export function getDebuggeeArgs(): DebuggeeArgs {
   const asString = process.argv.filter((_, i) => i > 1).join(' ');
 
   if (!asString || process.argv.length !== 4) {
-    throw new Error(`Turing machine arguments incorrect!\nTuring machine's arguments: ${asString}`);
+    throw new Error(`Debuggee arguments incorrect!\nDebuggee's arguments: ${asString}`);
   }
 
   return {

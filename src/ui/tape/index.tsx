@@ -20,8 +20,14 @@ export function Tape({ input, headPosition, viewIndex, selected }: TapeProps): R
       borderColor={selected ? PANEL_SELECTED_COLOR : PANEL_UNSELECTED_COLOR}
       flexDirection="column"
     >
-      <Text bold>Tape: {parser.formatTape(input, headPosition, viewIndex)}</Text>
+      <Box marginBottom={1}>
+        <Box marginRight={1}>
+          <Text color="green">[t]</Text>
+        </Box>
+        <Text>Tape Panel</Text>
+      </Box>
       <Newline />
+      <Text>{parser.formatTape(input, headPosition, viewIndex)}</Text>
       <Text bold>Head Pos: {headPosition}</Text>
     </Box>
   );

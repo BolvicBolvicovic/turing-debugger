@@ -9,6 +9,7 @@ import { Root } from './ui/root.js';
 import { lib } from './utils/lib.js';
 
 const program = cli.init();
+// TODO: refactor or change the name of getDebuggeeArgs
 const debuggeeArgs = cli.getDebuggeeArgs();
 const debuggee = debuggeeLib.launch(process.env.NODE_TM_PATH!, debuggeeArgs.asString);
 const machine = parser.turingMachine(debuggeeArgs.machinePath);

@@ -35,8 +35,8 @@ const TransitionRuleSchema = z.object({
   to_state: z.string(),
 });
 
-const TransitionSchema = z.record(z.string(), z.array(TransitionRuleSchema));
-export type Transition = z.infer<typeof TransitionSchema>;
+const TransitionsSchema = z.record(z.string(), z.array(TransitionRuleSchema));
+export type Transitions = z.infer<typeof TransitionsSchema>;
 
 export const TuringMachineSchema = z.object({
   name: z.string(),
@@ -45,7 +45,7 @@ export const TuringMachineSchema = z.object({
   states: z.array(z.string()),
   initial: z.string(),
   finals: z.array(z.string()),
-  transitions: TransitionSchema,
+  transitions: TransitionsSchema,
 });
 export type TuringMachine = z.infer<typeof TuringMachineSchema>;
 

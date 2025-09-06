@@ -109,7 +109,12 @@ export function Root({
         <Code selected={selectedPanel === PanelType.CODE} assemblyFile={assemblyFile} />
       </Box>
       <Box flexDirection={'column'} marginRight={1} height={PANEL_HEIGHT}>
-        <Transitions selected={selectedPanel === PanelType.TRANSITIONS} />
+        <Transitions
+          currentState={currentState}
+          transitions={machine.transitions}
+          finals={machine.finals}
+          selected={selectedPanel === PanelType.TRANSITIONS}
+        />
         <Helper />
       </Box>
     </Box>

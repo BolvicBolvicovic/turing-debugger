@@ -21,6 +21,10 @@ export async function launchDebuggee(tmPath: string, debuggee: string): Promise<
     continue;
   }
 
+  // Comment these lines to get debuggee output in the terminal
+  debuggeeProcess.stdout?.on('data', () => {});
+  debuggeeProcess.stderr?.on('data', () => {});
+
   return debuggeeProcess;
 }
 

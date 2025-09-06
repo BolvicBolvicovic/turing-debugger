@@ -8,6 +8,7 @@ import { parser } from './utils/parser.js';
 import { Root } from './ui/root.js';
 import { lib } from './utils/lib.js';
 
+const program = cli.init();
 const debuggeeArgs = cli.getDebuggeeArgs();
 const debuggee = debuggeeLib.launch(process.env.NODE_TM_PATH!, debuggeeArgs.asString);
 const machine = parser.turingMachine(debuggeeArgs.machinePath);
@@ -21,6 +22,7 @@ try {
     React.createElement(Root, {
       machine: await machine,
       debuggeeArgs,
+      assemblyFilePath: program.opts().assemblyFile?.split('/').pop(),
     })
   );
 

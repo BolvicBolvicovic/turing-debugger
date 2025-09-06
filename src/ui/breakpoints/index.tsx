@@ -15,7 +15,7 @@ export function Breakpoints({ selected }: BreakpointsProps): React.JSX.Element {
       flexDirection="column"
       borderColor={selected ? PANEL_SELECTED_COLOR : PANEL_UNSELECTED_COLOR}
       borderStyle={PANEL_BORDER_STYLE}
-      height={12}
+      height={14}
     >
       <Box marginBottom={1}>
         <Box marginRight={1}>

@@ -3,6 +3,7 @@ import {
   PANEL_SELECTED_COLOR,
   PANEL_UNSELECTED_COLOR,
   PANEL_BORDER_STYLE,
+  PANEL_HEIGHT,
 } from '../constants/main.constants.js';
 
 type TransitionsProps = {
@@ -15,7 +16,7 @@ export function Transitions({ selected }: TransitionsProps): React.JSX.Element {
       flexDirection="column"
       borderColor={selected ? PANEL_SELECTED_COLOR : PANEL_UNSELECTED_COLOR}
       borderStyle={PANEL_BORDER_STYLE}
-      height={14}
+      height={PANEL_HEIGHT - 10}
     >
       <Box marginBottom={1}>
         <Box marginRight={1}>

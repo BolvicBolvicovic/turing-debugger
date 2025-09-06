@@ -1,4 +1,4 @@
-import { Box, Text } from 'ink';
+import { Box, Newline, Text } from 'ink';
 import {
   PANEL_BORDER_STYLE,
   PANEL_SELECTED_COLOR,
@@ -20,12 +20,9 @@ export function Tape({ input, headPosition, viewIndex, selected }: TapeProps): R
       borderColor={selected ? PANEL_SELECTED_COLOR : PANEL_UNSELECTED_COLOR}
       flexDirection="column"
     >
-      <Text bold>
-        Head Position <Text bold={false}>(0 indexing): {headPosition}</Text>
-      </Text>
-      <Text bold>
-        Tape: <Text bold={false}>{parser.formatTape(input, headPosition, viewIndex)}</Text>
-      </Text>
+      <Text bold>Tape: {parser.formatTape(input, headPosition, viewIndex)}</Text>
+      <Newline />
+      <Text bold>Head Pos: {headPosition}</Text>
     </Box>
   );
 }

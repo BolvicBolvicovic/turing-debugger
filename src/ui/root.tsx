@@ -14,10 +14,16 @@ import { LEFT_PANEL_WIDTH, PANEL_HEIGHT } from './constants/main.constants.js';
 interface RootProps {
   machine: TuringMachine;
   debuggeeArgs: DebuggeeArgs;
+  assemblyFilePath?: string;
   onExit?: () => void;
 }
 
-export function Root({ machine, debuggeeArgs, onExit }: RootProps): React.JSX.Element {
+export function Root({
+  machine,
+  debuggeeArgs,
+  assemblyFilePath,
+  onExit,
+}: RootProps): React.JSX.Element {
   const { exit } = useApp();
 
   // Tape state
@@ -99,11 +105,11 @@ export function Root({ machine, debuggeeArgs, onExit }: RootProps): React.JSX.El
           headPosition={currentState.head}
           selected={selectedPanel === PanelType.TAPE}
         />
-        <Transitions selected={selectedPanel === PanelType.TRANSITIONS} />
         <Breakpoints selected={selectedPanel === PanelType.BREAKPOINTS} />
+        <Code selected={selectedPanel === PanelType.CODE} assemblyFilePath={assemblyFilePath} />
       </Box>
       <Box flexDirection={'column'} marginRight={1} height={PANEL_HEIGHT}>
-        <Code selected={selectedPanel === PanelType.CODE} />
+        <Transitions selected={selectedPanel === PanelType.TRANSITIONS} />
         <Helper />
       </Box>
     </Box>

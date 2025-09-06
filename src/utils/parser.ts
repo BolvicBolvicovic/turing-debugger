@@ -8,9 +8,9 @@ import {
   TuringMachine,
   TuringMachineSchema,
 } from './types/parser.types.js';
-import { lib } from './lib.js';
+import { LEFT_PANEL_WIDTH } from '../ui/constants/main.constants.js';
 
-let cachedBlank: string | null = null;
+const TAPE_WIDTH = LEFT_PANEL_WIDTH - 10;
 
 function expandPath(filePath: string): string {
   if (filePath.startsWith('~/')) {
@@ -32,8 +32,6 @@ function turingMachine(path: string): Promise<TuringMachine> {
         return;
       }
 
-      cachedBlank = result.data.blank;
-
       resolve(result.data);
     } catch (error) {
       reject(error);
@@ -44,24 +42,68 @@ function turingMachine(path: string): Promise<TuringMachine> {
 function step(rawStep: object): Promise<Step> {
   return new Promise((resolve, reject) => {
     try {
-      if (cachedBlank === null) {
-        throw new Error('Turing Machine must be parsed before parsing steps.');
-      }
-
       const result = StepSchema.safeParse(rawStep);
 
       if (!result.success) {
         throw new Error(`Invalid Step structure: ${result.error.message}`);
       }
 
-      resolve({ ...result.data, input: lib.trimChar(result.data.input, cachedBlank) });
+      resolve(result.data);
     } catch (error) {
       reject(error);
     }
   });
 }
 
+function formatTape(input: string, headPosition: number, viewIndex: number): string {
+  const tapeWithoutHead = input.slice(0, viewIndex) + '<' + input.slice(viewIndex);
+  const tapeWithHead =
+    viewIndex > headPosition + 1
+      ? tapeWithoutHead.slice(0, headPosition) +
+        '[' +
+        tapeWithoutHead.charAt(headPosition) +
+        ']' +
+        tapeWithoutHead.slice(headPosition + 1)
+      : viewIndex === headPosition + 1
+        ? tapeWithoutHead.slice(0, headPosition) +
+          '[' +
+          tapeWithoutHead.slice(headPosition, headPosition + 2) +
+          ']' +
+          tapeWithoutHead.slice(headPosition + 2)
+        : tapeWithoutHead.slice(0, headPosition + 1) +
+          '[' +
+          tapeWithoutHead.charAt(headPosition + 1) +
+          ']' +
+          tapeWithoutHead.slice(headPosition + 2);
+
+  const newViewIndex =
+    viewIndex > headPosition + 1
+      ? viewIndex + 2
+      : viewIndex === headPosition + 1
+        ? viewIndex + 1
+        : viewIndex;
+
+  if (tapeWithHead.length <= TAPE_WIDTH) {
+    return tapeWithHead;
+  }
+
+  const visibleTape =
+    newViewIndex <= TAPE_WIDTH / 2
+      ? tapeWithHead.slice(0, TAPE_WIDTH - 3) + '...'
+      : tapeWithHead.length - newViewIndex <= TAPE_WIDTH / 2
+        ? '...' + tapeWithHead.slice(-TAPE_WIDTH + 3)
+        : '...' +
+          tapeWithHead.slice(
+            newViewIndex - (TAPE_WIDTH / 2 - 3),
+            newViewIndex + (TAPE_WIDTH / 2 - 3)
+          ) +
+          '...';
+
+  return visibleTape;
+}
+
 export const parser: Parser = {
   turingMachine,
   step,
+  formatTape,
 };

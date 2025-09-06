@@ -20,6 +20,7 @@ export default tseslint.config(
       '@typescript-eslint/explicit-function-return-type': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-inferrable-types': 'off',
+      '@typescript-eslint/no-case-declarations': 'off',
     },
   },
   {

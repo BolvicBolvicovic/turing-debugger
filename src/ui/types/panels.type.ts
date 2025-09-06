@@ -1,0 +1,6 @@
+export enum PanelType {
+  TAPE = 'TAPE',
+  TRANSITIONS = 'TRANSITIONS',
+  CODE = 'CODE',
+  BREAKPOINTS = 'BREAKPOINTS',
+}

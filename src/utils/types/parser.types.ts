@@ -17,6 +17,15 @@ export interface Parser {
    * @throws Error if the structure is incorrect.
    */
   step: (rawStep: object) => Promise<Step>;
+
+  /**
+   * Formats the tape for display, centering around the head position.
+   * @param input - The tape input string.
+   * @param headPosition - The current head position (0-indexed).
+   * @param viewIndex - The index to center the view around (1-indexed).
+   * @returns The formatted tape string.
+   */
+  formatTape: (input: string, headPosition: number, viewIndex: number) => string;
 }
 
 const TransitionRuleSchema = z.object({

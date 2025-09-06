@@ -14,9 +14,7 @@ interface Commands {
 async function nextStep(): Promise<Step> {
   const data = await provider.get('http://localhost:8080/next-step');
   const parsedRawData = JSON.parse(data);
-  const parsedData = await parser.step(parsedRawData);
-
-  return parsedData;
+  return parser.step(parsedRawData);
 }
 
 export const commands: Commands = {

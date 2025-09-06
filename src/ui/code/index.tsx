@@ -7,10 +7,10 @@ import {
 
 type CodeProps = {
   selected: boolean;
-  assemblyFilePath?: string;
+  assemblyFile?: string;
 };
 
-export function Code({ selected, assemblyFilePath }: CodeProps): React.JSX.Element {
+export function Code({ selected, assemblyFile }: CodeProps): React.JSX.Element {
   return (
     <Box
       flexDirection="column"
@@ -25,9 +25,9 @@ export function Code({ selected, assemblyFilePath }: CodeProps): React.JSX.Eleme
           </Box>
           <Text>Code Panel</Text>
         </Box>
-        {assemblyFilePath && (
+        {assemblyFile && (
           <Box>
-            <Text>Assembly File: {assemblyFilePath}</Text>
+            <Text>Assembly File: {assemblyFile}</Text>
           </Box>
         )}
       </Box>

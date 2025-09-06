@@ -22,7 +22,7 @@ try {
     React.createElement(Root, {
       machine: await machine,
       debuggeeArgs,
-      assemblyFilePath: program.opts().assemblyFile?.split('/').pop(),
+      assemblyFile: program.opts().assemblyFile?.split('/').pop(),
     })
   );
 

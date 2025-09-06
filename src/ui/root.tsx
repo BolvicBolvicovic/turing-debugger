@@ -14,14 +14,14 @@ import { LEFT_PANEL_WIDTH, PANEL_HEIGHT } from './constants/main.constants.js';
 interface RootProps {
   machine: TuringMachine;
   debuggeeArgs: DebuggeeArgs;
-  assemblyFilePath?: string;
+  assemblyFile?: string;
   onExit?: () => void;
 }
 
 export function Root({
   machine,
   debuggeeArgs,
-  assemblyFilePath,
+  assemblyFile,
   onExit,
 }: RootProps): React.JSX.Element {
   const { exit } = useApp();
@@ -106,7 +106,7 @@ export function Root({
           selected={selectedPanel === PanelType.TAPE}
         />
         <Breakpoints selected={selectedPanel === PanelType.BREAKPOINTS} />
-        <Code selected={selectedPanel === PanelType.CODE} assemblyFilePath={assemblyFilePath} />
+        <Code selected={selectedPanel === PanelType.CODE} assemblyFile={assemblyFile} />
       </Box>
       <Box flexDirection={'column'} marginRight={1} height={PANEL_HEIGHT}>
         <Transitions selected={selectedPanel === PanelType.TRANSITIONS} />

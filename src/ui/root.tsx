@@ -121,6 +121,7 @@ export function Root({
           finals={machine.finals}
           selected={selectedPanel === PanelType.TRANSITIONS}
           fullContent={fullTransitionContent}
+          blank={machine.blank}
         />
         <Helper />
       </Box>

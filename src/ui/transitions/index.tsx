@@ -11,7 +11,7 @@ import { useState, useEffect, JSX } from 'react';
 // PANEL_HEIGHT - approximative Helper box height
 const HEIGHT = PANEL_HEIGHT - 10;
 // HEIGHT - title (up to 6 on error)
-const DRAWABLE_HEIGHT = HEIGHT - 6;
+const DEFAULT_DRAWABLE_HEIGHT = HEIGHT - 4;
 
 function updateContent(fullContent: Line[], unwrappedStates: Set<string>): Line[] {
   return fullContent.filter(
@@ -25,12 +25,16 @@ function findCurrentLineIndex(content: Line[], state: string): number | undefine
   return content.findIndex(line => line.text === state && line.type === 'state');
 }
 
-function calculatePageOffset(selectedLineIndex: number, previousOffset: number): number {
+function calculatePageOffset(
+  selectedLineIndex: number,
+  previousOffset: number,
+  drawableHeight: number
+): number {
   if (selectedLineIndex < previousOffset) {
     return selectedLineIndex;
   }
-  if (selectedLineIndex >= previousOffset + DRAWABLE_HEIGHT) {
-    return selectedLineIndex - DRAWABLE_HEIGHT + 1;
+  if (selectedLineIndex >= previousOffset + drawableHeight) {
+    return selectedLineIndex - drawableHeight + 1;
   }
   return previousOffset;
 }
@@ -41,6 +45,7 @@ type TransitionsProps = {
   fullContent: Line[];
   finals: string[];
   selected: boolean;
+  blank: string;
 };
 
 export function Transitions({
@@ -49,11 +54,13 @@ export function Transitions({
   fullContent,
   finals,
   selected,
+  blank,
 }: TransitionsProps): React.JSX.Element {
-  const read = currentState.input[currentState.head];
+  const read = currentState.input[currentState.head] || blank;
   const statesLength = Object.keys(transitions).length;
 
   const [error, setError] = useState<string | null>(null);
+  const [DRAWABLE_HEIGHT, setDrawableHeight] = useState(DEFAULT_DRAWABLE_HEIGHT);
   const [unwrappedStates, setUnwrappedStates] = useState<Set<string>>(
     new Set([currentState.state])
   );
@@ -61,7 +68,9 @@ export function Transitions({
   const [selectedLine, setSelectedLine] = useState<number>(
     findCurrentLineIndex(content, currentState.state) || 0
   );
-  const [pageOffset, setPageOffset] = useState(calculatePageOffset(selectedLine, 0));
+  const [pageOffset, setPageOffset] = useState(
+    calculatePageOffset(selectedLine, 0, DRAWABLE_HEIGHT)
+  );
 
   useEffect(() => {
     const applicableTransitionIndex = transitions[currentState.state]
@@ -70,30 +79,38 @@ export function Transitions({
           .filter(index => index !== -1)
       : [];
 
+    let newDrawableHeight = DRAWABLE_HEIGHT;
     if (
       unwrappedStates.size > 0 &&
       applicableTransitionIndex.length === 0 &&
       !finals.includes(currentState.state)
     ) {
       setError(`No transition found for state "${currentState.state}" with read symbol "${read}".`);
+      newDrawableHeight = DEFAULT_DRAWABLE_HEIGHT - 2;
     } else if (applicableTransitionIndex.length > 1) {
       setError(
-        `Multiple transitions found for state "${currentState.state}" with read symbol "${read}".`
+        `(Warning) Multiple transitions found for state "${currentState.state}" with read symbol "${read}".`
       );
+      newDrawableHeight = DEFAULT_DRAWABLE_HEIGHT - 2;
     } else if (read === undefined) {
       setError(`The head is out of the tape bounds.`);
+      newDrawableHeight = DEFAULT_DRAWABLE_HEIGHT - 2;
     } else {
       setError(null);
+      newDrawableHeight = DEFAULT_DRAWABLE_HEIGHT;
     }
 
-    const newContent = updateContent(fullContent, unwrappedStates);
-    const newSelectedLine = findCurrentLineIndex(newContent, content[selectedLine].text) || 0;
-    const newPageOffset = calculatePageOffset(newSelectedLine, pageOffset);
+    const newUnwrappedStates = new Set([currentState.state]);
+    const newContent = updateContent(fullContent, newUnwrappedStates);
+    const newSelectedLine = findCurrentLineIndex(newContent, currentState.state) || 0;
+    const newPageOffset = calculatePageOffset(newSelectedLine, pageOffset, newDrawableHeight);
 
+    setDrawableHeight(newDrawableHeight);
     setContent(newContent);
     setSelectedLine(newSelectedLine);
     setPageOffset(newPageOffset);
-  }, [currentState.state]);
+    setUnwrappedStates(newUnwrappedStates);
+  }, [currentState.head]);
 
   useInput((input, key) => {
     if (selected) {
@@ -113,7 +130,7 @@ export function Transitions({
 
           const newContent = updateContent(fullContent, newSet);
           const newSelectedLine = findCurrentLineIndex(newContent, content[selectedLine].text) || 0;
-          const newPageOffset = calculatePageOffset(newSelectedLine, pageOffset);
+          const newPageOffset = calculatePageOffset(newSelectedLine, pageOffset, DRAWABLE_HEIGHT);
 
           setContent(newContent);
           setSelectedLine(newSelectedLine);
@@ -127,7 +144,7 @@ export function Transitions({
           const newSelectedLine = selectedLine - 1;
 
           setSelectedLine(newSelectedLine);
-          setPageOffset(calculatePageOffset(newSelectedLine, pageOffset));
+          setPageOffset(calculatePageOffset(newSelectedLine, pageOffset, DRAWABLE_HEIGHT));
         }
       }
       if (key.downArrow) {
@@ -135,7 +152,7 @@ export function Transitions({
           const newSelectedLine = selectedLine + 1;
 
           setSelectedLine(newSelectedLine);
-          setPageOffset(calculatePageOffset(newSelectedLine, pageOffset));
+          setPageOffset(calculatePageOffset(newSelectedLine, pageOffset, DRAWABLE_HEIGHT));
         }
       }
     }
@@ -170,7 +187,7 @@ export function Transitions({
                 line.parent === currentState.state);
             return (
               <Box
-                key={`${line.type}-${line.index}`}
+                key={`${line.type}-${line.text}`}
                 paddingLeft={line.type === 'transition' ? 1 : 0}
               >
                 <Text

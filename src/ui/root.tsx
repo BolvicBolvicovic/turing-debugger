@@ -26,6 +26,9 @@ export function Root({
   onExit,
 }: RootProps): React.JSX.Element {
   const { exit } = useApp();
+  // Helper writing state
+  const [writing, setWriting] = useState(false);
+
   // Transitions content state
   const fullTransitionContent = parser.mapTransitionsToContent(
     machine.transitions,
@@ -49,32 +52,37 @@ export function Root({
       exit();
     }
 
-    switch (input) {
-      case 's':
-        if (machine.finals.includes(currentState.state)) {
-          onExit?.();
-          exit();
-          return;
-        }
-        // eslint-disable-next-line
-        const nextStep = await commands.nextStep();
-        setCurrentState(nextStep);
-        setViewIndex(nextStep.head + 1);
-        break;
-      case 't':
-        setSelectedPanel(PanelType.TAPE);
-        break;
-      case 'r':
-        setSelectedPanel(PanelType.TRANSITIONS);
-        break;
-      case 'c':
-        setSelectedPanel(PanelType.CODE);
-        break;
-      case 'b':
-        setSelectedPanel(PanelType.BREAKPOINTS);
-        break;
-      default:
-        break;
+    if (!writing) {
+      switch (input) {
+        case 's':
+          if (machine.finals.includes(currentState.state)) {
+            onExit?.();
+            exit();
+            return;
+          }
+          // eslint-disable-next-line
+          const nextStep = await commands.nextStep();
+          setCurrentState(nextStep);
+          setViewIndex(nextStep.head + 1);
+          break;
+        case 't':
+          setSelectedPanel(PanelType.TAPE);
+          break;
+        case 'r':
+          setSelectedPanel(PanelType.TRANSITIONS);
+          break;
+        case 'c':
+          setSelectedPanel(PanelType.CODE);
+          break;
+        case 'b':
+          setSelectedPanel(PanelType.BREAKPOINTS);
+          break;
+        case 'h':
+          setSelectedPanel(PanelType.HELPER);
+          break;
+        default:
+          break;
+      }
     }
 
     if (key.leftArrow) {
@@ -123,7 +131,11 @@ export function Root({
           fullContent={fullTransitionContent}
           blank={machine.blank}
         />
-        <Helper />
+        <Helper
+          selected={selectedPanel === PanelType.HELPER}
+          writing={writing}
+          setWriting={setWriting}
+        />
       </Box>
     </Box>
   );

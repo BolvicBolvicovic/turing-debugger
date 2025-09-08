@@ -3,4 +3,5 @@ export enum PanelType {
   TRANSITIONS = 'TRANSITIONS',
   CODE = 'CODE',
   BREAKPOINTS = 'BREAKPOINTS',
+  HELPER = 'HELPER',
 }

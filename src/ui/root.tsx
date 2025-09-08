@@ -10,6 +10,7 @@ import { Code } from './code/index.js';
 import { Breakpoints } from './breakpoints/index.js';
 import { Transitions } from './transitions/index.js';
 import { LEFT_PANEL_WIDTH, PANEL_HEIGHT } from './constants/main.constants.js';
+import { parser } from '../utils/parser.js';
 
 interface RootProps {
   machine: TuringMachine;
@@ -25,6 +26,11 @@ export function Root({
   onExit,
 }: RootProps): React.JSX.Element {
   const { exit } = useApp();
+  // Transitions content state
+  const fullTransitionContent = parser.mapTransitionsToContent(
+    machine.transitions,
+    Object.keys(machine.transitions).concat(machine.finals)
+  );
 
   // Tape state
   const [currentState, setCurrentState] = useState<Step>({
@@ -108,12 +114,13 @@ export function Root({
         <Breakpoints selected={selectedPanel === PanelType.BREAKPOINTS} />
         <Code selected={selectedPanel === PanelType.CODE} assemblyFile={assemblyFile} />
       </Box>
-      <Box flexDirection={'column'} marginRight={1} height={PANEL_HEIGHT}>
+      <Box flexDirection={'column'} marginRight={1} height={PANEL_HEIGHT} flexGrow={1}>
         <Transitions
           currentState={currentState}
           transitions={machine.transitions}
           finals={machine.finals}
           selected={selectedPanel === PanelType.TRANSITIONS}
+          fullContent={fullTransitionContent}
         />
         <Helper />
       </Box>

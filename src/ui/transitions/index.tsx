@@ -5,26 +5,40 @@ import {
   PANEL_BORDER_STYLE,
   PANEL_HEIGHT,
 } from '../constants/main.constants.js';
-import { Step, Transitions } from '../../utils/types/parser.types.js';
-import { useState, useEffect } from 'react';
+import { Line, Step, Transitions } from '../../utils/types/parser.types.js';
+import { useState, useEffect, JSX } from 'react';
 
 // PANEL_HEIGHT - approximative Helper box height
 const HEIGHT = PANEL_HEIGHT - 10;
-// HEIGHT - title (3) - currentState (1)
-const DRAWABLE_HEIGHT = HEIGHT - 4;
+// HEIGHT - title (up to 6 on error)
+const DRAWABLE_HEIGHT = HEIGHT - 6;
 
-function mapTransitionToString({
-  read,
-  write,
-  action,
-  to_state,
-}: Transitions[string][number]): string {
-  return `read: ${read}, write: ${write}, action: ${action}, to_state: ${to_state}`;
+function updateContent(fullContent: Line[], unwrappedStates: Set<string>): Line[] {
+  return fullContent.filter(
+    line =>
+      line.type === 'state' ||
+      (line.type === 'transition' && unwrappedStates.has(line.parent || ''))
+  );
+}
+
+function findCurrentLineIndex(content: Line[], state: string): number | undefined {
+  return content.findIndex(line => line.text === state && line.type === 'state');
+}
+
+function calculatePageOffset(selectedLineIndex: number, previousOffset: number): number {
+  if (selectedLineIndex < previousOffset) {
+    return selectedLineIndex;
+  }
+  if (selectedLineIndex >= previousOffset + DRAWABLE_HEIGHT) {
+    return selectedLineIndex - DRAWABLE_HEIGHT + 1;
+  }
+  return previousOffset;
 }
 
 type TransitionsProps = {
   currentState: Step;
   transitions: Transitions;
+  fullContent: Line[];
   finals: string[];
   selected: boolean;
 };
@@ -32,22 +46,32 @@ type TransitionsProps = {
 export function Transitions({
   currentState,
   transitions,
+  fullContent,
   finals,
   selected,
 }: TransitionsProps): React.JSX.Element {
-  const [error, setError] = useState<string | null>(null);
-  const [selectedState, setSelectedState] = useState<string | null>(currentState.state);
-  // TODO: Turn this into an array so that multiple states can be unwrapped at once
-  const [unwrapped, setUnwrapped] = useState<string | null>(selectedState ?? currentState.state);
-
-  const currentTransitions = unwrapped ? (transitions[unwrapped] ?? []) : [];
   const read = currentState.input[currentState.head];
-  const applicableTransitionIndex =
-    currentTransitions.map((t, i) => (t.read === read ? i : -1)).filter(i => i !== -1) ?? [];
+  const statesLength = Object.keys(transitions).length;
+
+  const [error, setError] = useState<string | null>(null);
+  const [unwrappedStates, setUnwrappedStates] = useState<Set<string>>(
+    new Set([currentState.state])
+  );
+  const [content, setContent] = useState<Line[]>(updateContent(fullContent, unwrappedStates));
+  const [selectedLine, setSelectedLine] = useState<number>(
+    findCurrentLineIndex(content, currentState.state) || 0
+  );
+  const [pageOffset, setPageOffset] = useState(calculatePageOffset(selectedLine, 0));
 
   useEffect(() => {
+    const applicableTransitionIndex = transitions[currentState.state]
+      ? transitions[currentState.state]
+          .map((rule, index) => (rule.read === read ? index : -1))
+          .filter(index => index !== -1)
+      : [];
+
     if (
-      unwrapped &&
+      unwrappedStates.size > 0 &&
       applicableTransitionIndex.length === 0 &&
       !finals.includes(currentState.state)
     ) {
@@ -61,49 +85,58 @@ export function Transitions({
     } else {
       setError(null);
     }
-  }, [applicableTransitionIndex.length, currentState.state, read]);
 
-  const maxTransitionsHeight = DRAWABLE_HEIGHT - (error ? 1 : 0);
+    const newContent = updateContent(fullContent, unwrappedStates);
+    const newSelectedLine = findCurrentLineIndex(newContent, content[selectedLine].text) || 0;
+    const newPageOffset = calculatePageOffset(newSelectedLine, pageOffset);
 
-  const visibleTransitions =
-    currentTransitions.length <= maxTransitionsHeight
-      ? currentTransitions.map(mapTransitionToString)
-      : applicableTransitionIndex[0] <= maxTransitionsHeight / 2
-        ? currentTransitions
-            .map(mapTransitionToString)
-            .slice(0, maxTransitionsHeight - 1)
-            .concat(['...'])
-        : currentTransitions.length - applicableTransitionIndex[0] <= maxTransitionsHeight / 2
-          ? ['...'].concat(
-              currentTransitions.map(mapTransitionToString).slice(-maxTransitionsHeight + 1)
-            )
-          : ['...'].concat(
-              currentTransitions
-                .map(mapTransitionToString)
-                .slice(
-                  applicableTransitionIndex[0] - (maxTransitionsHeight / 2 - 1),
-                  applicableTransitionIndex[0] + maxTransitionsHeight / 2 - 1
-                )
-                .concat(['...'])
-            );
-
-  const maxStatesHeight = DRAWABLE_HEIGHT - visibleTransitions.length + (error ? 0 : 1);
-  const states = Object.keys(transitions).concat(finals);
-  const visibleStates =
-    states.length <= maxStatesHeight
-      ? states
-      : states.slice(states.indexOf(currentState.state + 1), maxStatesHeight);
+    setContent(newContent);
+    setSelectedLine(newSelectedLine);
+    setPageOffset(newPageOffset);
+  }, [currentState.state]);
 
   useInput((input, key) => {
     if (selected) {
-      if (input === ' ') {
-        setUnwrapped(unwrapped === selectedState ? null : selectedState);
+      if (
+        input === ' ' &&
+        content[selectedLine].type === 'state' &&
+        !finals.includes(content[selectedLine].text)
+      ) {
+        setUnwrappedStates(set => {
+          const newSet = new Set(set);
+
+          if (newSet.has(content[selectedLine].text)) {
+            newSet.delete(content[selectedLine].text);
+          } else {
+            newSet.add(content[selectedLine].text);
+          }
+
+          const newContent = updateContent(fullContent, newSet);
+          const newSelectedLine = findCurrentLineIndex(newContent, content[selectedLine].text) || 0;
+          const newPageOffset = calculatePageOffset(newSelectedLine, pageOffset);
+
+          setContent(newContent);
+          setSelectedLine(newSelectedLine);
+          setPageOffset(newPageOffset);
+
+          return newSet;
+        });
       }
       if (key.upArrow) {
-        setSelectedState(prev => states[prev === null ? 0 : states.indexOf(prev) - 1] ?? prev);
+        if (selectedLine > 0) {
+          const newSelectedLine = selectedLine - 1;
+
+          setSelectedLine(newSelectedLine);
+          setPageOffset(calculatePageOffset(newSelectedLine, pageOffset));
+        }
       }
       if (key.downArrow) {
-        setSelectedState(prev => states[prev === null ? 0 : states.indexOf(prev) + 1] ?? prev);
+        if (selectedLine < content.length - 1) {
+          const newSelectedLine = selectedLine + 1;
+
+          setSelectedLine(newSelectedLine);
+          setPageOffset(calculatePageOffset(newSelectedLine, pageOffset));
+        }
       }
     }
   });
@@ -120,46 +153,43 @@ export function Transitions({
         <Box marginRight={1}>
           <Text color="green">[r]</Text>
         </Box>
-        <Text>Transitions Panel</Text>
+        <Text>
+          Transitions Panel: States: {statesLength} - Transitions:{' '}
+          {fullContent.length - statesLength}
+        </Text>
         {error && <Text color="red">{error}</Text>}
       </Box>
       <Box flexDirection="column">
-        {visibleStates.map(s =>
-          unwrapped && s === unwrapped ? (
-            <>
-              <Text
-                bold
-                color={s === currentState.state ? PANEL_SELECTED_COLOR : PANEL_UNSELECTED_COLOR}
-                inverse={s === selectedState}
-                wrap="truncate"
+        {((): JSX.Element[] => {
+          const slice = content.slice(pageOffset, pageOffset + DRAWABLE_HEIGHT);
+          return slice.map((line, index) => {
+            const current =
+              (line.text === currentState.state && line.type === 'state') ||
+              (line.text.includes(`read: ${read},`) &&
+                line.type === 'transition' &&
+                line.parent === currentState.state);
+            return (
+              <Box
+                key={`${line.type}-${line.index}`}
+                paddingLeft={line.type === 'transition' ? 1 : 0}
               >
-                {!finals.includes(s) ? '▼' : '►'} {s}
-              </Text>
-              {visibleTransitions.map(t => (
-                <Box key={t} paddingLeft={1}>
-                  <Text
-                    color={
-                      s === currentState.state && t.includes(`read: ${read}`)
-                        ? PANEL_SELECTED_COLOR
-                        : PANEL_UNSELECTED_COLOR
-                    }
-                    wrap="truncate"
-                  >
-                    {t}
-                  </Text>
-                </Box>
-              ))}
-            </>
-          ) : (
-            <Text
-              color={s === currentState.state ? PANEL_SELECTED_COLOR : PANEL_UNSELECTED_COLOR}
-              inverse={s === selectedState}
-              wrap="truncate"
-            >
-              ► {s}
-            </Text>
-          )
-        )}
+                <Text
+                  bold={current}
+                  color={current ? PANEL_SELECTED_COLOR : PANEL_UNSELECTED_COLOR}
+                  inverse={content[selectedLine] === slice[index]}
+                  wrap="truncate"
+                >
+                  {line.type === 'state'
+                    ? !finals.includes(line.text) && unwrappedStates.has(line.text)
+                      ? '▼'
+                      : '►'
+                    : '•'}{' '}
+                  {line.text}
+                </Text>
+              </Box>
+            );
+          });
+        })()}
       </Box>
     </Box>
   );

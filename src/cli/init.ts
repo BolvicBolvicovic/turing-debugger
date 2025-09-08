@@ -1,10 +1,23 @@
 import { Command, program } from 'commander';
 import { DebuggeeArgs } from './cli.types.js';
+import * as path from 'path';
+import * as os from 'os';
+
+function expandPath(filePath: string): string {
+  if (filePath.startsWith('~/')) {
+    return path.join(os.homedir(), filePath.slice(2));
+  }
+  return filePath;
+}
 
 export function getDebuggeeArgs(): DebuggeeArgs {
-  const machinePath = process.env.NODE_TM_PATH! + '/' + program.args[0].trim().split('/').join('/');
+  const machinePath =
+    expandPath(process.env.NODE_TM_PATH!) + '/' + program.args[0].trim().split('/').join('/');
   const machineInput = program.args[1];
-  const asString = machinePath + ' ' + machineInput;
+
+  const quotes = machineInput.match(/^".*"$/) ? (machineInput.match(/^'.*'$/) ? '' : "'") : '"';
+
+  const asString = `${quotes}${machinePath}${quotes} ${quotes}${machineInput}${quotes}`;
 
   return {
     machinePath,

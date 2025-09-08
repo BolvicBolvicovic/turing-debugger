@@ -17,6 +17,9 @@ export async function launchDebuggee(tmPath: string, debuggee: string): Promise<
   });
 
   while (!data.includes('Running at http://localhost:8080')) {
+    if (data.toLowerCase().includes('error')) {
+      throw new Error(`Debuggee error: ${data}`);
+    }
     await new Promise(resolve => setTimeout(resolve, 100));
     continue;
   }
@@ -30,8 +33,8 @@ export async function launchDebuggee(tmPath: string, debuggee: string): Promise<
 
 export function setupDebuggee(debuggee: ChildProcess): void {
   // Monitor debuggee output
-  debuggee.stdout?.on('data', data => console.log('STDOUT:', data.toString()));
-  debuggee.stderr?.on('data', data => console.log('STDERR:', data.toString()));
+  //debuggee.stdout?.on('data', data => console.log('STDOUT:', data.toString()));
+  //debuggee.stderr?.on('data', data => console.log('STDERR:', data.toString()));
 
   debuggee.on('error', error => console.error('Debuggee error:', error));
   process.on('SIGINT', () => cleanupDebuggee(debuggee));

@@ -26,6 +26,20 @@ export interface Parser {
    * @returns The formatted tape string.
    */
   formatTape: (input: string, headPosition: number, viewIndex: number) => string;
+
+  /**
+   * Maps the transitions to lines for display in the UI.
+   * @param transitions - The transitions object from the Turing Machine.
+   * @param transitionsKeys - The keys of the transitions object (state names).
+   * @returns An array of Line objects representing the transitions content.
+   */
+  mapTransitionsToContent: (
+    transitions: Record<
+      string,
+      { read: string; write: string; action: 'RIGHT' | 'LEFT'; to_state: string }[]
+    >,
+    transitionsKeys: string[]
+  ) => Line[];
 }
 
 const TransitionRuleSchema = z.object({
@@ -55,3 +69,10 @@ export const StepSchema = z.object({
   head: z.number().nonnegative().int(),
 });
 export type Step = z.infer<typeof StepSchema>;
+
+export type Line = {
+  text: string;
+  index: number;
+  type: 'state' | 'transition';
+  parent?: string;
+};

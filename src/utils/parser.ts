@@ -2,9 +2,11 @@ import { readFileSync } from 'fs';
 import { homedir } from 'os';
 import { resolve } from 'path';
 import {
+  Line,
   Parser,
   Step,
   StepSchema,
+  Transitions,
   TuringMachine,
   TuringMachineSchema,
 } from './types/parser.types.js';
@@ -102,8 +104,40 @@ function formatTape(input: string, headPosition: number, viewIndex: number): str
   return visibleTape;
 }
 
+function mapTransitionsToContent(transitions: Transitions, transitionsKeys: string[]): Line[] {
+  const content: Line[] = [];
+  let globalIndex = 0;
+
+  for (const key of transitionsKeys) {
+    const isFinalState = !transitions[key];
+    const stateLine: Line = {
+      text: key,
+      index: globalIndex++,
+      type: 'state',
+      parent: undefined,
+    };
+    content.push(stateLine);
+
+    if (!isFinalState) {
+      const rules = transitions[key] || [];
+      for (const rule of rules) {
+        const transitionLine: Line = {
+          text: `read: ${rule.read}, write: ${rule.write}, action: ${rule.action}, to_state: ${rule.to_state}`,
+          index: globalIndex++,
+          type: 'transition',
+          parent: key,
+        };
+        content.push(transitionLine);
+      }
+    }
+  }
+
+  return content;
+}
+
 export const parser: Parser = {
   turingMachine,
   step,
   formatTape,
+  mapTransitionsToContent,
 };

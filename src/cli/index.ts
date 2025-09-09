@@ -1,4 +1,4 @@
-import { getDebuggeeArgs, init } from './init.js';
+import { clearScreen, getDebuggeeArgs, init, resizeTerminal } from './init.js';
 
 interface CLI {
   /**
@@ -11,9 +11,22 @@ interface CLI {
    * Initialize the commander program instance and returns it.
    */
   init: typeof init;
+
+  /**
+   * Resize the terminal to fit the UI.
+   * @throws Error if the terminal cannot be resized.
+   */
+  resizeTerminal: () => Promise<void>;
+
+  /**
+   * Clear the terminal screen.
+   */
+  clearScreen: () => void;
 }
 
 export const cli: CLI = {
   getDebuggeeArgs,
   init,
+  resizeTerminal,
+  clearScreen,
 };

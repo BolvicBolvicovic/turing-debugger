@@ -10,8 +10,4 @@ function trimCharEnd(str: string, char: string): string {
   return str.replace(regex, '');
 }
 
-function clearScreen(): void {
-  process.stdout.write('\x1b[2J\x1b[0f');
-}
-
-export const lib = { trimChar, trimCharEnd, clearScreen };
+export const lib = { trimChar, trimCharEnd };

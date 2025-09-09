@@ -6,7 +6,6 @@ import { cli } from './cli/index.js';
 import { debuggee as debuggeeLib } from './debuggee/index.js';
 import { parser } from './utils/parser.js';
 import { Root } from './ui/root.js';
-import { lib } from './utils/lib.js';
 
 const program = cli.init();
 // TODO: refactor or change the name of getDebuggeeArgs
@@ -17,7 +16,8 @@ const machine = parser.turingMachine(debuggeeArgs.machinePath);
 try {
   debuggeeLib.setup(await debuggee);
 
-  lib.clearScreen();
+  await cli.resizeTerminal();
+  cli.clearScreen();
 
   // Specific case linked to the assembly compiler
   const startMem = await machine.then(m => m.states.find(s => s === '_start_mem'));

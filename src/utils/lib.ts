@@ -1,3 +1,5 @@
+import { Library } from './types/lib.types.js';
+
 function trimChar(str: string, char: string): string {
   const escapedChar = char.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const regex = new RegExp(`^${escapedChar}+|${escapedChar}+$`, 'g');
@@ -10,4 +12,4 @@ function trimCharEnd(str: string, char: string): string {
   return str.replace(regex, '');
 }
 
-export const lib = { trimChar, trimCharEnd };
+export const lib: Library = { trimChar, trimCharEnd };

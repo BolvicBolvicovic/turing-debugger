@@ -60,14 +60,25 @@ export function Root({
             return;
           }
           // eslint-disable-next-line
-          const nextStep = await commands.nextStep();
+          const nextStep = await commands.step();
           setCurrentState(nextStep);
           setViewIndex(nextStep.head + 1);
+          break;
+        case 'r':
+          if (machine.finals.includes(currentState.state)) {
+            onExit?.();
+            exit();
+            return;
+          }
+          // eslint-disable-next-line
+          const runStep = await commands.run();
+          setCurrentState(runStep);
+          setViewIndex(runStep.head + 1);
           break;
         case 't':
           setSelectedPanel(PanelType.TAPE);
           break;
-        case 'r':
+        case 'i':
           setSelectedPanel(PanelType.TRANSITIONS);
           break;
         case 'c':

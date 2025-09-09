@@ -5,7 +5,7 @@ const NO_INPUT = ['Enter a search query'];
 
 const manuel: Record<string, string[]> = {
   step: ["Press 's' to step."],
-  run: ['Run is not yet implemented.'],
+  run: ["Press 'r' to run until the next breakpoint or halt."],
   quit: ["Press 'q', <ctrl+c> or <escape> to quit."],
   help: [
     "Press 'h' to toggle this panel.",
@@ -13,7 +13,7 @@ const manuel: Record<string, string[]> = {
     'Press <enter> to stop searching.',
   ],
   transitions: [
-    "Press 't' to select the Transitions panel.",
+    "Press 'i' to select the Transitions panel.",
     'Press <space> to wrap/unwrap the selected transition.',
     'Use up/down and left/right arrows to navigate.',
   ],

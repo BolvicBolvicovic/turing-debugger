@@ -106,7 +106,11 @@ export function Transitions({
     const newUnwrappedStates = new Set([currentState.state]);
     const newContent = updateContent(fullContent, newUnwrappedStates);
     const newSelectedLine = findCurrentLineIndex(newContent, currentState.state) || 0;
-    const newPageOffset = calculatePageOffset(newSelectedLine, pageOffset, newDrawableHeight);
+    const newPageOffset = calculatePageOffset(
+      newSelectedLine + newDrawableHeight - 1,
+      pageOffset,
+      newDrawableHeight
+    );
 
     setDrawableHeight(newDrawableHeight);
     setContent(newContent);
@@ -185,7 +189,7 @@ export function Transitions({
       <Box marginBottom={1} flexDirection="column">
         <Box flexDirection="row">
           <Box marginRight={1}>
-            <Text color="green">[r]</Text>
+            <Text color="green">[i]</Text>
           </Box>
           <Text>
             Transitions Panel: States: {statesLength} - Transitions:{' '}

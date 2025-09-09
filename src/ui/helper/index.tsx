@@ -46,7 +46,7 @@ export function Helper({ selected, writing, setWriting }: HelperProps): React.JS
           setWriting(true);
         }
       } else {
-        if (key.return) {
+        if (key.escape) {
           setWriting(false);
           return;
         }
@@ -55,7 +55,7 @@ export function Helper({ selected, writing, setWriting }: HelperProps): React.JS
           setInput(prev => prev.slice(0, -1));
         } else if (
           inpt &&
-          !key.escape &&
+          !key.return &&
           !key.ctrl &&
           !key.meta &&
           !key.shift &&

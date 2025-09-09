@@ -10,7 +10,7 @@ const manuel: Record<string, string[]> = {
   help: [
     "Press 'h' to toggle this panel.",
     "Press 'w' to start writing.",
-    'Press <enter> to stop searching.',
+    'Press <esc> to stop searching.',
   ],
   transitions: [
     "Press 'i' to select the Transitions panel.",

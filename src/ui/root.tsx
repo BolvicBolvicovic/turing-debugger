@@ -47,12 +47,11 @@ export function Root({
   const [selectedPanel, setSelectedPanel] = useState<PanelType>(PanelType.TAPE);
 
   useInput(async (input, key) => {
-    if (key.escape || input === 'q') {
-      onExit?.();
-      exit();
-    }
-
     if (!writing) {
+      if (key.escape || input === 'q') {
+        onExit?.();
+        exit();
+      }
       switch (input) {
         case 's':
           if (machine.finals.includes(currentState.state)) {

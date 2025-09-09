@@ -16,7 +16,12 @@ type HelperProps = {
 
 export function Helper({ selected, writing, setWriting }: HelperProps): React.JSX.Element {
   const [input, setInput] = useState<string>('');
+  const [results, setResults] = useState<string[]>([]);
   const [blinking, setBlinking] = useState(true);
+
+  useEffect(() => {
+    setResults(man.search(input));
+  }, [input]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -33,23 +38,17 @@ export function Helper({ selected, writing, setWriting }: HelperProps): React.JS
     };
   }, [writing, blinking]);
 
-  useEffect(() => {
-    if (!selected) {
-      setWriting(false);
-      setInput('');
-    }
-  }, [selected]);
-
   useInput((inpt, key) => {
     if (selected) {
       if (!writing) {
         if (inpt === 'w') {
+          setInput('');
           setWriting(true);
         }
       } else {
         if (key.return) {
           setWriting(false);
-          setInput('');
+          return;
         }
 
         if (key.backspace || key.delete) {
@@ -91,10 +90,11 @@ export function Helper({ selected, writing, setWriting }: HelperProps): React.JS
               : selected
                 ? "Press 'w' to start writing..."
                 : "Press 'h' for help panel..."}
-            {writing && blinking && <Text>|</Text>}
+            {writing && <Text>{blinking ? '|' : ' '}</Text>}
           </Text>
         </Box>
-        {writing && man.search(input).map(line => <Text key={line}>{line}</Text>)}
+        {(writing || (input && results !== man.NO_INPUT && results !== man.NO_RESULTS)) &&
+          results.map(line => <Text key={line}>{line}</Text>)}
       </Box>
     </Box>
   );

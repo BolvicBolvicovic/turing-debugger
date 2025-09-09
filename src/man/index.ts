@@ -15,7 +15,7 @@ const manuel: Record<string, string[]> = {
   transitions: [
     "Press 't' to select the Transitions panel.",
     'Press <space> to wrap/unwrap the selected transition.',
-    'Use up/down arrows to navigate.',
+    'Use up/down and left/right arrows to navigate.',
   ],
   tape: ["Press 't' to select the Tape panel.", 'Use left/right arrows to navigate the tape.'],
   code: ["Press 'c' to select the Code panel."],

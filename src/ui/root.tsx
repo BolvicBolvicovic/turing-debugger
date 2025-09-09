@@ -9,7 +9,7 @@ import { Helper } from './helper/index.js';
 import { Code } from './code/index.js';
 import { Breakpoints } from './breakpoints/index.js';
 import { Transitions } from './transitions/index.js';
-import { LEFT_PANEL_WIDTH, PANEL_HEIGHT } from './constants/main.constants.js';
+import { LEFT_PANEL_WIDTH, PANEL_HEIGHT, RIGHT_PANEL_WIDTH } from './constants/main.constants.js';
 import { parser } from '../utils/parser.js';
 
 interface RootProps {
@@ -121,7 +121,7 @@ export function Root({
         <Breakpoints selected={selectedPanel === PanelType.BREAKPOINTS} />
         <Code selected={selectedPanel === PanelType.CODE} assemblyFile={assemblyFile} />
       </Box>
-      <Box flexDirection={'column'} marginRight={1} height={PANEL_HEIGHT} flexGrow={1}>
+      <Box flexDirection={'column'} marginRight={1} width={RIGHT_PANEL_WIDTH} height={PANEL_HEIGHT}>
         <Transitions
           currentState={currentState}
           transitions={machine.transitions}

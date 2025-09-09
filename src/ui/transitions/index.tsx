@@ -12,6 +12,8 @@ import { useState, useEffect, JSX } from 'react';
 const HEIGHT = PANEL_HEIGHT - 10;
 // HEIGHT - title (up to 6 on error)
 const DEFAULT_DRAWABLE_HEIGHT = HEIGHT - 4;
+// Based on console.log(">_LEFT_get_current_state_0:mov_eax0001_return                  ".length)
+const DRAWABLE_LINE_WIDTH = 63;
 
 function updateContent(fullContent: Line[], unwrappedStates: Set<string>): Line[] {
   return fullContent.filter(
@@ -71,6 +73,7 @@ export function Transitions({
   const [pageOffset, setPageOffset] = useState(
     calculatePageOffset(selectedLine, 0, DRAWABLE_HEIGHT)
   );
+  const [lineOffset, setLineOffset] = useState(0);
 
   useEffect(() => {
     const applicableTransitionIndex = transitions[currentState.state]
@@ -110,6 +113,7 @@ export function Transitions({
     setSelectedLine(newSelectedLine);
     setPageOffset(newPageOffset);
     setUnwrappedStates(newUnwrappedStates);
+    setLineOffset(0);
   }, [currentState.head]);
 
   useInput((input, key) => {
@@ -155,6 +159,18 @@ export function Transitions({
           setPageOffset(calculatePageOffset(newSelectedLine, pageOffset, DRAWABLE_HEIGHT));
         }
       }
+
+      if (key.leftArrow) {
+        if (lineOffset > 0) {
+          setLineOffset(lineOffset - 1);
+        }
+      }
+
+      if (key.rightArrow) {
+        if (content[selectedLine].text.length > lineOffset + DRAWABLE_LINE_WIDTH) {
+          setLineOffset(lineOffset + 1);
+        }
+      }
     }
   });
 
@@ -166,14 +182,16 @@ export function Transitions({
       height={HEIGHT}
       width="full"
     >
-      <Box marginBottom={1}>
-        <Box marginRight={1}>
-          <Text color="green">[r]</Text>
+      <Box marginBottom={1} flexDirection="column">
+        <Box flexDirection="row">
+          <Box marginRight={1}>
+            <Text color="green">[r]</Text>
+          </Box>
+          <Text>
+            Transitions Panel: States: {statesLength} - Transitions:{' '}
+            {fullContent.length - statesLength}
+          </Text>
         </Box>
-        <Text>
-          Transitions Panel: States: {statesLength} - Transitions:{' '}
-          {fullContent.length - statesLength}
-        </Text>
         {error && <Text color="red">{error}</Text>}
       </Box>
       <Box flexDirection="column">
@@ -201,7 +219,7 @@ export function Transitions({
                       ? '▼'
                       : '►'
                     : '•'}{' '}
-                  {line.text}
+                  {line.text.slice(lineOffset)}
                 </Text>
               </Box>
             );

@@ -19,6 +19,12 @@ try {
 
   lib.clearScreen();
 
+  // Specific case linked to the assembly compiler
+  const startMem = await machine.then(m => m.states.find(s => s === '_start_mem'));
+  if (startMem) {
+    debuggeeArgs.machineInput = '#' + debuggeeArgs.machineInput;
+  }
+
   const { waitUntilExit } = render(
     React.createElement(Root, {
       machine: await machine,

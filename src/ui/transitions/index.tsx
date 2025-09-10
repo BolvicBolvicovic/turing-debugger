@@ -147,6 +147,15 @@ export function Transitions({
           return newSet;
         });
       }
+
+      if (input === 'f') {
+        const newSelectedLine = findCurrentLineIndex(content, currentState.state) || 0;
+        const newPageOffset = calculatePageOffset(newSelectedLine, pageOffset, DRAWABLE_HEIGHT);
+
+        setSelectedLine(newSelectedLine);
+        setPageOffset(newPageOffset);
+      }
+
       if (key.upArrow) {
         if (selectedLine > 0) {
           const newSelectedLine = selectedLine - 1;
@@ -155,6 +164,7 @@ export function Transitions({
           setPageOffset(calculatePageOffset(newSelectedLine, pageOffset, DRAWABLE_HEIGHT));
         }
       }
+
       if (key.downArrow) {
         if (selectedLine < content.length - 1) {
           const newSelectedLine = selectedLine + 1;

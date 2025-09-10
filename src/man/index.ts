@@ -10,19 +10,20 @@ const manuel: Record<string, string[]> = {
   help: [
     "Press 'h' to toggle this panel.",
     "Press 'w' to start writing.",
+    'Use up/down arrows to navigate search results.',
     'Press <esc> to stop searching.',
   ],
   transitions: [
     "Press 'i' to select the Transitions panel.",
     'Press <space> to wrap/unwrap the selected transition.',
-    'Use up/down and left/right arrows to navigate.',
+    'Use up/down and left/right arrows to navigate transitions.',
   ],
   tape: [
     "Press 't' to select the Tape panel.",
     'Use left/right arrows to navigate the tape.',
-    "Press 'o' to go to the origin.",
-    "Press 'e' to go to the end.",
-    "Press 'f' to find the head.",
+    "Press 'o' to go to the origin of the tape.",
+    "Press 'e' to go to the end of the tape.",
+    "Press 'f' to find the head of the tape.",
   ],
   code: ["Press 'c' to select the Code panel."],
   breakpoints: ["Press 'b' to select the Breakpoints panel."],
@@ -96,7 +97,7 @@ function search(input: string): string[] {
   const results = [...prefixMatches, ...containsMatches];
 
   if (results.length > 0) {
-    return results.slice(0, MAX_RESULTS);
+    return results;
   }
 
   const scored: { key: string; score: number }[] = manuelKeys.map(key => ({
@@ -121,4 +122,5 @@ export const man = {
   search,
   NO_RESULTS,
   NO_INPUT,
+  MAX_RESULTS,
 };

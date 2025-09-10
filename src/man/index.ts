@@ -3,10 +3,15 @@ const MAX_RESULTS = 3;
 const NO_RESULTS = ['No results found'];
 const NO_INPUT = ['Enter a search query'];
 
+const WRITE_INPUT_DEF = ["Press 'w' to start writing in the selected input/panel."];
+
 const manuel: Record<string, string[]> = {
   step: ["Press 's' to step."],
   run: ["Press 'r' to run until the next breakpoint or halt."],
   quit: ["Press 'q', <ctrl+c> or <escape> to quit."],
+  write: WRITE_INPUT_DEF,
+  input: WRITE_INPUT_DEF,
+  find: ["Press 'f' to start finding the head in the selected panel."],
   help: [
     "Press 'h' to toggle this panel.",
     "Press 'w' to start writing.",

@@ -18,6 +18,7 @@ export function Input({
   input,
   setInput,
   panelActionText,
+  width = INPUT_WIDTH,
   ...props
 }: InputProps): JSX.Element {
   const writing = generalWriting && selected;
@@ -58,7 +59,7 @@ export function Input({
   });
 
   return (
-    <Box {...props} width={INPUT_WIDTH}>
+    <Box {...props} width={width}>
       <Text key="helper-writing-indicator">{writing ? '> ' : ''}</Text>
       <Text
         color={writing ? 'white' : 'gray'}

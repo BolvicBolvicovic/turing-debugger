@@ -65,7 +65,7 @@ export function Helper({ selected, writing, setWriting }: HelperProps): React.JS
           generalWriting={writing}
           input={input}
           setInput={setInput}
-          placeholder='Press "h" for help panel...'
+          placeholder="Press 'h' for help panel..."
         />
         {((writing && selected) ||
           (input && results !== man.NO_INPUT && results !== man.NO_RESULTS)) && (

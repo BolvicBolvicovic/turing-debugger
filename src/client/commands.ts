@@ -1,3 +1,4 @@
+import { BreakpointType } from '../ui/types/breakpoints.type.js';
 import { parser } from '../utils/parser.js';
 import { provider } from '../utils/provider.js';
 import { Step } from '../utils/types/parser.types.js';
@@ -19,18 +20,17 @@ interface Commands {
 
   /**
    * Adds a breakpoint to the debuggee.
-   * @param state - The current state of the debuggee.
-   * @param read - The value to read from the debuggee.
+   * @param breakpoint - The breakpoint to add.
    * @returns Promise<void>
    */
-  breakpointAdd: (state: string, read: string) => Promise<void>;
+  breakpointAdd: (breakpoint: BreakpointType) => Promise<void>;
 
   /**
    * Removes a breakpoint from the debuggee.
-   * @param params - An object containing the state and read value of the breakpoint to remove.
+   * @param breakpoint - The breakpoint to remove.
    * @returns Promise<void>
    */
-  breakpointRemove: (params: { state: string; read: string }) => Promise<void>;
+  breakpointRemove: (breakpoint: BreakpointType) => Promise<void>;
 }
 
 async function step(): Promise<Step> {
@@ -45,14 +45,8 @@ async function run(): Promise<Step> {
   return parser.step(parsedRawData);
 }
 
-async function breakpointAdd(state: string, read: string): Promise<void> {
-  const data = await provider.post(
-    'http://localhost:8080/breakpoint',
-    JSON.stringify({
-      state,
-      read,
-    })
-  );
+async function breakpointAdd(breakpoint: BreakpointType): Promise<void> {
+  const data = await provider.post('http://localhost:8080/breakpoint', JSON.stringify(breakpoint));
   const parsedRawData = JSON.parse(data);
 
   if (parsedRawData.error) {
@@ -60,8 +54,8 @@ async function breakpointAdd(state: string, read: string): Promise<void> {
   }
 }
 
-async function breakpointRemove(params: { state: string; read: string }): Promise<void> {
-  const data = await provider.del('http://localhost:8080/breakpoint', JSON.stringify(params));
+async function breakpointRemove(breakpoint: BreakpointType): Promise<void> {
+  const data = await provider.del('http://localhost:8080/breakpoint', JSON.stringify(breakpoint));
   const parsedRawData = JSON.parse(data);
 
   if (parsedRawData.error) {

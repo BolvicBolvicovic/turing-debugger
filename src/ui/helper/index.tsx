@@ -20,7 +20,7 @@ export function Helper({ selected, writing, setWriting }: HelperProps): React.JS
   const [resultOffset, setResultOffset] = useState(0);
 
   useEffect(() => {
-    setResults(man.search(input));
+    setResults(man.search(input.toLowerCase()));
   }, [input]);
 
   useInput((inpt, key) => {
@@ -65,9 +65,10 @@ export function Helper({ selected, writing, setWriting }: HelperProps): React.JS
           generalWriting={writing}
           input={input}
           setInput={setInput}
-          panelActionText='Press "h" for help panel...'
+          placeholder='Press "h" for help panel...'
         />
-        {(writing || (input && results !== man.NO_INPUT && results !== man.NO_RESULTS)) && (
+        {((writing && selected) ||
+          (input && results !== man.NO_INPUT && results !== man.NO_RESULTS)) && (
           <Text color="gray" dimColor>
             {results.length === 1 && (input.length === 0 || results === man.NO_RESULTS)
               ? 0
@@ -75,7 +76,8 @@ export function Helper({ selected, writing, setWriting }: HelperProps): React.JS
             result{results.length !== 1 ? 's' : ''} found
           </Text>
         )}
-        {(writing || (input && results !== man.NO_INPUT && results !== man.NO_RESULTS)) &&
+        {((writing && selected) ||
+          (input && results !== man.NO_INPUT && results !== man.NO_RESULTS)) &&
           results
             .slice(resultOffset, resultOffset + man.MAX_RESULTS)
             .map(line => <Text key={line}>{line}</Text>)}

@@ -29,7 +29,7 @@ export function Root({
 }: RootProps): React.JSX.Element {
   const { exit } = useApp();
 
-  // Helper writing state
+  // General writing state
   const [writing, setWriting] = useState(false);
 
   // Transitions content state
@@ -104,7 +104,13 @@ export function Root({
           headPosition={currentState.head}
           selected={selectedPanel === PanelType.TAPE}
         />
-        <Breakpoints selected={selectedPanel === PanelType.BREAKPOINTS} />
+        <Breakpoints
+          selected={selectedPanel === PanelType.BREAKPOINTS}
+          writing={writing}
+          setWriting={setWriting}
+          states={Object.keys(machine.transitions).concat(machine.finals)}
+          alphabet={machine.alphabet}
+        />
         <Code
           selected={selectedPanel === PanelType.CODE}
           assemblyFile={assemblyFile}

@@ -2,14 +2,15 @@ import { Box, Text, useInput } from 'ink';
 import { ComponentProps, JSX, useEffect, useState } from 'react';
 import { INPUT_WIDTH } from '../constants/main.constants.js';
 
-const START_WRITING_ACTION = "Press 'w' to start writing...";
+const START_WRITING_ACTION = "Press 'w' to write...";
 
 type InputProps = {
   selected: boolean;
   generalWriting: boolean;
   input: string;
   setInput: (input: string) => void;
-  panelActionText?: string;
+  placeholder?: string;
+  maxLength?: number;
 } & ComponentProps<typeof Box>;
 
 export function Input({
@@ -17,8 +18,9 @@ export function Input({
   generalWriting,
   input,
   setInput,
-  panelActionText,
+  placeholder = '',
   width = INPUT_WIDTH,
+  maxLength = INPUT_WIDTH - 5,
   ...props
 }: InputProps): JSX.Element {
   const writing = generalWriting && selected;
@@ -50,8 +52,7 @@ export function Input({
         !key.return &&
         !key.ctrl &&
         !key.meta &&
-        !key.shift &&
-        input.length < INPUT_WIDTH - 5
+        input.length < maxLength
       ) {
         setInput(input + inpt);
       }
@@ -68,7 +69,7 @@ export function Input({
         wrap="truncate-start"
         key="helper-input"
       >
-        {writing ? input : selected ? START_WRITING_ACTION : panelActionText}
+        {input.length > 0 || writing ? input : selected ? START_WRITING_ACTION : placeholder}
         {writing && <Text>{blinking ? '|' : ' '}</Text>}
       </Text>
     </Box>

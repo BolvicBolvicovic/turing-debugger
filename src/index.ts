@@ -30,6 +30,7 @@ try {
       machine: await machine,
       debuggeeArgs,
       assemblyFile: program.opts().assemblyFile?.split('/').pop(),
+      registers: !!startMem,
     })
   );
 

@@ -16,6 +16,7 @@ interface RootProps {
   machine: TuringMachine;
   debuggeeArgs: DebuggeeArgs;
   assemblyFile?: string;
+  registers: boolean;
   onExit?: () => void;
 }
 
@@ -23,9 +24,11 @@ export function Root({
   machine,
   debuggeeArgs,
   assemblyFile,
+  registers,
   onExit,
 }: RootProps): React.JSX.Element {
   const { exit } = useApp();
+
   // Helper writing state
   const [writing, setWriting] = useState(false);
 
@@ -102,7 +105,12 @@ export function Root({
           selected={selectedPanel === PanelType.TAPE}
         />
         <Breakpoints selected={selectedPanel === PanelType.BREAKPOINTS} />
-        <Code selected={selectedPanel === PanelType.CODE} assemblyFile={assemblyFile} />
+        <Code
+          selected={selectedPanel === PanelType.CODE}
+          assemblyFile={assemblyFile}
+          registers={registers}
+          tape={currentState.input}
+        />
       </Box>
       <Box flexDirection={'column'} marginRight={1} width={RIGHT_PANEL_WIDTH} height={PANEL_HEIGHT}>
         <Transitions

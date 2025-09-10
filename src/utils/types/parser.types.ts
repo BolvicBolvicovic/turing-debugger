@@ -19,15 +19,6 @@ export interface Parser {
   step: (rawStep: object) => Promise<Step>;
 
   /**
-   * Formats the tape for display, centering around the head position.
-   * @param input - The tape input string.
-   * @param headPosition - The current head position (0-indexed).
-   * @param viewIndex - The index to center the view around (1-indexed).
-   * @returns The formatted tape string.
-   */
-  formatTape: (input: string, headPosition: number, viewIndex: number) => string;
-
-  /**
    * Maps the transitions to lines for display in the UI.
    * @param transitions - The transitions object from the Turing Machine.
    * @param transitionsKeys - The keys of the transitions object (state names).

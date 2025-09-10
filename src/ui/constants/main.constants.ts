@@ -12,3 +12,6 @@ export const PANEL_HEIGHT = 30;
 
 // Inputs
 export const INPUT_WIDTH = 35;
+
+// Tape
+export const TAPE_WIDTH = LEFT_PANEL_WIDTH - 10;

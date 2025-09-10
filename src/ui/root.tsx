@@ -41,7 +41,6 @@ export function Root({
     state: machine.initial,
     head: 0,
   });
-  const [viewIndex, setViewIndex] = useState(1);
 
   // Panel state
   const [selectedPanel, setSelectedPanel] = useState<PanelType>(PanelType.TAPE);
@@ -62,7 +61,6 @@ export function Root({
           // eslint-disable-next-line
           const nextStep = await commands.step();
           setCurrentState(nextStep);
-          setViewIndex(nextStep.head + 1);
           break;
         case 'r':
           if (machine.finals.includes(currentState.state)) {
@@ -73,7 +71,6 @@ export function Root({
           // eslint-disable-next-line
           const runStep = await commands.run();
           setCurrentState(runStep);
-          setViewIndex(runStep.head + 1);
           break;
         case 't':
           setSelectedPanel(PanelType.TAPE);
@@ -94,30 +91,6 @@ export function Root({
           break;
       }
     }
-
-    if (key.leftArrow) {
-      switch (selectedPanel) {
-        case PanelType.TRANSITIONS:
-        case PanelType.CODE:
-        case PanelType.BREAKPOINTS:
-          return;
-        case PanelType.TAPE:
-          setViewIndex(viewIndex === 1 ? 1 : viewIndex - 1);
-          break;
-      }
-    }
-
-    if (key.rightArrow) {
-      switch (selectedPanel) {
-        case PanelType.TRANSITIONS:
-        case PanelType.CODE:
-        case PanelType.BREAKPOINTS:
-          return;
-        case PanelType.TAPE:
-          setViewIndex(viewIndex < currentState.input.length ? viewIndex + 1 : viewIndex);
-          break;
-      }
-    }
   });
 
   return (
@@ -125,7 +98,6 @@ export function Root({
       <Box flexDirection="column" marginRight={1} width={LEFT_PANEL_WIDTH} height={PANEL_HEIGHT}>
         <Tape
           input={currentState.input}
-          viewIndex={viewIndex}
           headPosition={currentState.head}
           selected={selectedPanel === PanelType.TAPE}
         />

@@ -10,9 +10,6 @@ import {
   TuringMachine,
   TuringMachineSchema,
 } from './types/parser.types.js';
-import { LEFT_PANEL_WIDTH } from '../ui/constants/main.constants.js';
-
-const TAPE_WIDTH = LEFT_PANEL_WIDTH - 10;
 
 function expandPath(filePath: string): string {
   if (filePath.startsWith('~/')) {
@@ -57,53 +54,6 @@ function step(rawStep: object): Promise<Step> {
   });
 }
 
-function formatTape(input: string, headPosition: number, viewIndex: number): string {
-  const tapeWithoutHead = input.slice(0, viewIndex) + '<' + input.slice(viewIndex);
-  const tapeWithHead =
-    viewIndex > headPosition + 1
-      ? tapeWithoutHead.slice(0, headPosition) +
-        '[' +
-        tapeWithoutHead.charAt(headPosition) +
-        ']' +
-        tapeWithoutHead.slice(headPosition + 1)
-      : viewIndex === headPosition + 1
-        ? tapeWithoutHead.slice(0, headPosition) +
-          '[' +
-          tapeWithoutHead.slice(headPosition, headPosition + 2) +
-          ']' +
-          tapeWithoutHead.slice(headPosition + 2)
-        : tapeWithoutHead.slice(0, headPosition + 1) +
-          '[' +
-          tapeWithoutHead.charAt(headPosition + 1) +
-          ']' +
-          tapeWithoutHead.slice(headPosition + 2);
-
-  const newViewIndex =
-    viewIndex > headPosition + 1
-      ? viewIndex + 2
-      : viewIndex === headPosition + 1
-        ? viewIndex + 1
-        : viewIndex;
-
-  if (tapeWithHead.length <= TAPE_WIDTH) {
-    return tapeWithHead;
-  }
-
-  const visibleTape =
-    newViewIndex <= TAPE_WIDTH / 2
-      ? tapeWithHead.slice(0, TAPE_WIDTH - 3) + '...'
-      : tapeWithHead.length - newViewIndex <= TAPE_WIDTH / 2
-        ? '...' + tapeWithHead.slice(-TAPE_WIDTH + 3)
-        : '...' +
-          tapeWithHead.slice(
-            newViewIndex - (TAPE_WIDTH / 2 - 3),
-            newViewIndex + (TAPE_WIDTH / 2 - 3)
-          ) +
-          '...';
-
-  return visibleTape;
-}
-
 function mapTransitionsToContent(transitions: Transitions, transitionsKeys: string[]): Line[] {
   const content: Line[] = [];
   let globalIndex = 0;
@@ -138,6 +88,5 @@ function mapTransitionsToContent(transitions: Transitions, transitionsKeys: stri
 export const parser: Parser = {
   turingMachine,
   step,
-  formatTape,
   mapTransitionsToContent,
 };

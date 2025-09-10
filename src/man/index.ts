@@ -17,7 +17,13 @@ const manuel: Record<string, string[]> = {
     'Press <space> to wrap/unwrap the selected transition.',
     'Use up/down and left/right arrows to navigate.',
   ],
-  tape: ["Press 't' to select the Tape panel.", 'Use left/right arrows to navigate the tape.'],
+  tape: [
+    "Press 't' to select the Tape panel.",
+    'Use left/right arrows to navigate the tape.',
+    "Press 'o' to go to the origin.",
+    "Press 'e' to go to the end.",
+    "Press 'f' to find the head.",
+  ],
   code: ["Press 'c' to select the Code panel."],
   breakpoints: ["Press 'b' to select the Breakpoints panel."],
 };

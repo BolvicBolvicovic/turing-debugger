@@ -23,7 +23,7 @@ export function Code({ selected, assemblyFile }: CodeProps): React.JSX.Element {
           <Box marginRight={1}>
             <Text color="green">[c]</Text>
           </Box>
-          <Text>Code Panel</Text>
+          <Text>Assembly</Text>
         </Box>
         {assemblyFile && (
           <Box>

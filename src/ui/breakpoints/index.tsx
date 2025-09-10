@@ -21,7 +21,7 @@ export function Breakpoints({ selected }: BreakpointsProps): React.JSX.Element {
         <Box marginRight={1}>
           <Text color="green">[b]</Text>
         </Box>
-        <Text>Breakpoints Panel</Text>
+        <Text>Breakpoints</Text>
       </Box>
       <Text>This panel will display and manage breakpoints for the Turing machine.</Text>
       <Text>Feature coming soon!</Text>

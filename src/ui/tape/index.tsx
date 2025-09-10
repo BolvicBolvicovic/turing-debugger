@@ -70,7 +70,7 @@ export function Tape({ input, headPosition, selected }: TapeProps): React.ReactN
         <Box marginRight={1}>
           <Text color="green">[t]</Text>
         </Box>
-        <Text>Tape Panel</Text>
+        <Text>Tape</Text>
       </Box>
       <Newline />
       <Text wrap="truncate">{formatTape(input, headPosition, offset)}</Text>

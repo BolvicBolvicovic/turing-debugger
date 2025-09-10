@@ -202,8 +202,7 @@ export function Transitions({
             <Text color="green">[i]</Text>
           </Box>
           <Text>
-            Transitions Panel: States: {statesLength} - Transitions:{' '}
-            {fullContent.length - statesLength}
+            Transitions: States: {statesLength} - Transitions: {fullContent.length - statesLength}
           </Text>
         </Box>
         {error && <Text color="red">{error}</Text>}

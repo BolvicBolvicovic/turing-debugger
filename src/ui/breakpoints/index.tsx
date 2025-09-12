@@ -30,6 +30,7 @@ export function Breakpoints({
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [selecting, setSelecting] = useState<boolean>(false);
   const [breakpoints, setBreakpoints] = useState<BreakpointType[]>([]);
+  const [offset, setOffset] = useState<number>(0);
   const [lineOffset, setLineOffset] = useState<number>(0);
 
   // Success or error message
@@ -48,6 +49,7 @@ export function Breakpoints({
       setMessage('');
       setSelecting(false);
       setSelectedIndex(0);
+      setOffset(0);
       setLineOffset(0);
       return;
     } else {
@@ -61,13 +63,13 @@ export function Breakpoints({
     if (!selected) return;
 
     if (key.return) {
-      if (breakpoints.some(bp => bp.stateName === stateName && bp.readSymbol === readSymbol)) {
+      if (breakpoints.some(bp => bp.state === stateName && bp.read === readSymbol)) {
         setMessage('Breakpoint already exists.');
         return;
       }
 
       const { sent, message } = await setBreakpoint(
-        { stateName, readSymbol },
+        { state: stateName, read: readSymbol },
         true,
         states,
         alphabet
@@ -79,7 +81,27 @@ export function Breakpoints({
       setReadSymbol('');
       setCurrentInput(CurrentInput.STATE_NAME);
       setWriting(false);
-      setBreakpoints(prev => [...prev, { stateName, readSymbol }]);
+      setBreakpoints(prev => [...prev, { state: stateName, read: readSymbol }]);
+      setLineOffset(0);
+      return;
+    }
+    if (key.leftArrow && lineOffset > 0) {
+      setLineOffset(l => l - 1);
+      return;
+    }
+
+    if (key.rightArrow) {
+      if (selecting && !writing) {
+        const currentBreakpoint = breakpoints[selectedIndex];
+        const fullText = `State: "${currentBreakpoint.state}", Read: "${currentBreakpoint.read}"`;
+        if (lineOffset < fullText.length - 1) {
+          setLineOffset(l => l + 1);
+        }
+      } else {
+        if (lineOffset < message.length - 1) {
+          setLineOffset(l => l + 1);
+        }
+      }
       return;
     }
 
@@ -88,8 +110,8 @@ export function Breakpoints({
         setSelectedIndex(i => {
           const newIndex = i === 0 ? Math.max(0, breakpoints.length - 1) : i - 1;
 
-          // Update line offset if needed
-          setLineOffset(currentOffset => {
+          // Update offset if needed
+          setOffset(currentOffset => {
             if (newIndex < currentOffset) {
               return newIndex;
             }
@@ -107,8 +129,8 @@ export function Breakpoints({
         setSelectedIndex(i => {
           const newIndex = i === breakpoints.length - 1 ? 0 : i + 1;
 
-          // Update line offset if needed
-          setLineOffset(currentOffset => {
+          // Update offset if needed
+          setOffset(currentOffset => {
             if (newIndex < currentOffset) {
               return newIndex;
             }
@@ -134,8 +156,8 @@ export function Breakpoints({
         setSelectedIndex(i => {
           const newIndex = i === 0 ? 0 : i - 1;
 
-          // Adjust line offset if necessary
-          setLineOffset(currentOffset => {
+          // Adjust offset if necessary
+          setOffset(currentOffset => {
             const maxOffset = Math.max(0, newBps.length - MAX_VISIBLE_BREAKPOINTS);
             if (currentOffset > maxOffset) {
               return maxOffset;
@@ -157,7 +179,12 @@ export function Breakpoints({
           prev === CurrentInput.STATE_NAME ? CurrentInput.READ_SYMBOL : CurrentInput.STATE_NAME
         );
 
-        const { message } = await setBreakpoint({ stateName, readSymbol }, false, states, alphabet);
+        const { message } = await setBreakpoint(
+          { state: stateName, read: readSymbol },
+          false,
+          states,
+          alphabet
+        );
         setMessage(message);
         return;
       }
@@ -165,7 +192,12 @@ export function Breakpoints({
       if (key.escape) {
         setWriting(false);
 
-        const { message } = await setBreakpoint({ stateName, readSymbol }, false, states, alphabet);
+        const { message } = await setBreakpoint(
+          { state: stateName, read: readSymbol },
+          false,
+          states,
+          alphabet
+        );
         setMessage(message);
         return;
       }
@@ -202,6 +234,7 @@ export function Breakpoints({
           input={stateName}
           setInput={setStateName}
           placeholder="State name"
+          maxLength={100}
         />
         <Input
           borderStyle="round"
@@ -215,39 +248,36 @@ export function Breakpoints({
         />
       </Box>
       <Box height={1}>
-        <Text dimColor={!selected} italic={!selected}>
-          {message}
+        <Text dimColor={!selected} italic={!selected} wrap="truncate">
+          {message.slice(lineOffset)}
         </Text>
       </Box>
       <Box flexDirection="column" borderStyle="classic" height={5}>
         {breakpoints.length === 0 && <Text>No breakpoints set.</Text>}
         {breakpoints.length > 0 && (
           <>
-            {lineOffset > 0 && <Text dimColor>↑ {lineOffset} more above</Text>}
-            {breakpoints
-              .slice(lineOffset, lineOffset + MAX_VISIBLE_BREAKPOINTS)
-              .map((bp, displayIndex) => {
-                const actualIndex = lineOffset + displayIndex;
-                return (
-                  <Box key={`${bp.stateName}-${bp.readSymbol}`}>
-                    <Text
-                      color={
-                        selecting && selectedIndex === actualIndex
-                          ? PANEL_SELECTED_COLOR
-                          : undefined
-                      }
-                    >
-                      {selecting && selectedIndex === actualIndex ? '→ ' : '  '}
-                      {`State: "${bp.stateName}", Read: "${bp.readSymbol}"`}
+            {breakpoints.slice(offset, offset + MAX_VISIBLE_BREAKPOINTS).map((bp, displayIndex) => {
+              const actualIndex = offset + displayIndex;
+              return (
+                <Box key={`${bp.state}-${bp.read}`} justifyContent="space-between">
+                  <Text
+                    color={
+                      selecting && selectedIndex === actualIndex ? PANEL_SELECTED_COLOR : undefined
+                    }
+                    wrap="truncate"
+                  >
+                    {selecting && selectedIndex === actualIndex ? '→ ' : '  '}
+                    {`State: "${bp.state}", Read: "${bp.read}"`.slice(lineOffset)}
+                  </Text>
+                  {displayIndex === 0 && offset > 0 && <Text dimColor>↑ {offset} more above</Text>}
+                  {displayIndex === 2 && offset + MAX_VISIBLE_BREAKPOINTS < breakpoints.length && (
+                    <Text dimColor>
+                      ↓ {breakpoints.length - offset - MAX_VISIBLE_BREAKPOINTS} more below
                     </Text>
-                  </Box>
-                );
-              })}
-            {lineOffset + MAX_VISIBLE_BREAKPOINTS < breakpoints.length && (
-              <Text dimColor>
-                ↓ {breakpoints.length - lineOffset - MAX_VISIBLE_BREAKPOINTS} more below
-              </Text>
-            )}
+                  )}
+                </Box>
+              );
+            })}
           </>
         )}
       </Box>

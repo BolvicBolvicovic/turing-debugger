@@ -108,7 +108,7 @@ export function Root({
           selected={selectedPanel === PanelType.BREAKPOINTS}
           writing={writing}
           setWriting={setWriting}
-          states={Object.keys(machine.transitions).concat(machine.finals)}
+          states={machine.states.concat(machine.finals)}
           alphabet={machine.alphabet}
         />
         <Code

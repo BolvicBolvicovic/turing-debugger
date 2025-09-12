@@ -31,8 +31,16 @@ const manuel: Record<string, string[]> = {
     "Press 'e' to go to the end of the tape.",
     "Press 'f' to find the head of the tape.",
   ],
+  breakpoints: [
+    "Press 'b' to select the Breakpoints panel.",
+    "Press 'w' to start writing in the Breakpoints panel.",
+    'Press <enter> to add a breakpoint when writing.',
+    "Press 'f' to access the list of breakpoints and enable scrolling.",
+    'In list mode, use up/down arrows to navigate breakpoints.',
+    'In list mode, use left/right arrows to scroll the message.',
+    "In list mode, press 'd' to delete the selected breakpoint.",
+  ],
   code: ["Press 'c' to select the Code panel."],
-  breakpoints: ["Press 'b' to select the Breakpoints panel."],
 };
 
 function jaroWinkler(s1: string, s2: string): number {

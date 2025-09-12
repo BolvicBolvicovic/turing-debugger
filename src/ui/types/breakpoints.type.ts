@@ -4,6 +4,6 @@ export enum CurrentInput {
 }
 
 export type BreakpointType = {
-  stateName: string;
-  readSymbol: string;
+  state: string;
+  read: string;
 };

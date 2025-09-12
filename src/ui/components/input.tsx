@@ -20,7 +20,7 @@ export function Input({
   setInput,
   placeholder = '',
   width = INPUT_WIDTH,
-  maxLength = INPUT_WIDTH - 5,
+  maxLength = INPUT_WIDTH,
   ...props
 }: InputProps): JSX.Element {
   const writing = generalWriting && selected;

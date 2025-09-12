@@ -1,5 +1,7 @@
 # The Turing Debugger
 
+![Debugger view when used with the UTM](public/debugger_with_utm.png 'Debugger view when used with the UTM')
+
 This project has two goals:
 
 - Give a practical tool to debug programs created for the Turing Machine I built.
